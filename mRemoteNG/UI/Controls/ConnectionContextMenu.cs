@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -35,6 +35,7 @@ namespace mRemoteNG.UI.Controls
         private ToolStripMenuItem _cMenTreeConnectWithOptionsNoCredentials;
         private ToolStripMenuItem _cMenTreeConnectWithOptionsConnectInFullscreen;
         private ToolStripMenuItem _cMenTreeConnectWithOptionsViewOnly;
+        private ToolStripMenuItem _cMenTreeConnectWithOptionsSpanAllScreens;
         private ToolStripMenuItem _cMenTreeDisconnect;
         private ToolStripSeparator _cMenTreeSep2;
         private ToolStripMenuItem _cMenTreeToolsTransferFile;
@@ -95,6 +96,7 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeConnectWithOptionsNoCredentials = new ToolStripMenuItem();
             _cMenTreeConnectWithOptionsChoosePanelBeforeConnecting = new ToolStripMenuItem();
             _cMenTreeConnectWithOptionsViewOnly = new ToolStripMenuItem();
+            _cMenTreeConnectWithOptionsSpanAllScreens = new ToolStripMenuItem();
             _cMenTreeDisconnect = new ToolStripMenuItem();
             _cMenTreeSep1 = new ToolStripSeparator();
             _cMenTreeToolsExternalApps = new ToolStripMenuItem();
@@ -175,6 +177,7 @@ namespace mRemoteNG.UI.Controls
                 _cMenTreeConnectWithOptionsConnectToConsoleSession,
                 _cMenTreeConnectWithOptionsDontConnectToConsoleSession,
                 _cMenTreeConnectWithOptionsConnectInFullscreen,
+                _cMenTreeConnectWithOptionsSpanAllScreens,
                 _cMenTreeConnectWithOptionsNoCredentials,
                 _cMenTreeConnectWithOptionsChoosePanelBeforeConnecting,
                 _cMenTreeConnectWithOptionsViewOnly
@@ -207,6 +210,14 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeConnectWithOptionsConnectInFullscreen.Size = new System.Drawing.Size(245, 22);
             _cMenTreeConnectWithOptionsConnectInFullscreen.Text = "Connect in fullscreen";
             _cMenTreeConnectWithOptionsConnectInFullscreen.Click += OnConnectInFullscreenClicked;
+            //
+            // cMenTreeConnectWithOptionsSpanAllScreens
+            //
+            _cMenTreeConnectWithOptionsSpanAllScreens.Image = Properties.Resources.Monitor_16x;
+            _cMenTreeConnectWithOptionsSpanAllScreens.Name = "_cMenTreeConnectWithOptionsSpanAllScreens";
+            _cMenTreeConnectWithOptionsSpanAllScreens.Size = new System.Drawing.Size(245, 22);
+            _cMenTreeConnectWithOptionsSpanAllScreens.Text = "Connect spanning all screens";
+            _cMenTreeConnectWithOptionsSpanAllScreens.Click += OnConnectSpanAllScreensClicked;
             //
             // cMenTreeConnectWithOptionsNoCredentials
             //
@@ -461,6 +472,7 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeConnectWithOptionsConnectToConsoleSession.Text = Language.ConnectToConsoleSession;
             _cMenTreeConnectWithOptionsDontConnectToConsoleSession.Text = Language.DontConnectToConsoleSession;
             _cMenTreeConnectWithOptionsConnectInFullscreen.Text = Language.ConnectInFullscreen;
+            _cMenTreeConnectWithOptionsSpanAllScreens.Text = "Connect spanning all screens";
             _cMenTreeConnectWithOptionsNoCredentials.Text = Language.ConnectNoCredentials;
             _cMenTreeConnectWithOptionsChoosePanelBeforeConnecting.Text = Language.ChoosePanelBeforeConnecting;
             _cMenTreeConnectWithOptionsViewOnly.Text = Language.ConnectInViewOnlyMode;
@@ -551,6 +563,7 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeMoveUp.Enabled = false;
             _cMenTreeMoveDown.Enabled = false;
             _cMenTreeConnectWithOptionsViewOnly.Enabled = false;
+            _cMenTreeConnectWithOptionsSpanAllScreens.Enabled = false;
             _cMenTreeApplyInheritanceToChildren.Enabled = false;
             _cMenTreeApplyDefaultInheritance.Enabled = false;
             _cMenTreeCopyHostname.Enabled = false;
@@ -579,6 +592,7 @@ namespace mRemoteNG.UI.Controls
         {
             _cMenTreeConnectWithOptionsConnectInFullscreen.Enabled = false;
             _cMenTreeConnectWithOptionsConnectToConsoleSession.Enabled = false;
+            _cMenTreeConnectWithOptionsSpanAllScreens.Enabled = false;
 
             bool hasOpenConnections = containerInfo.Children.Any(child => child.OpenConnections.Count > 0);
             _cMenTreeDisconnect.Enabled = hasOpenConnections;
@@ -618,13 +632,14 @@ namespace mRemoteNG.UI.Controls
             if (connectionInfo.OpenConnections.Count == 0)
                 _cMenTreeDisconnect.Enabled = false;
 
-            if (!(connectionInfo.Protocol == ProtocolType.SSH1 | connectionInfo.Protocol == ProtocolType.SSH2))
+            if (!(connectionInfo.Protocol == ProtocolType.SSH1 || connectionInfo.Protocol == ProtocolType.SSH2))
                 _cMenTreeToolsTransferFile.Enabled = false;
 
             if (!(connectionInfo.Protocol == ProtocolType.RDP))
             {
                 _cMenTreeConnectWithOptionsConnectInFullscreen.Enabled = false;
                 _cMenTreeConnectWithOptionsConnectToConsoleSession.Enabled = false;
+                _cMenTreeConnectWithOptionsSpanAllScreens.Enabled = false;
             }
 
             if (connectionInfo.Protocol == ProtocolType.IntApp)
@@ -757,6 +772,17 @@ namespace mRemoteNG.UI.Controls
             else
                 Runtime.ConnectionInitiator.OpenConnection(_connectionTree.SelectedNode,
                                                            ConnectionInfo.Force.Fullscreen | ConnectionInfo.Force.DoNotJump);
+        }
+
+        private void OnConnectSpanAllScreensClicked(object sender, EventArgs e)
+        {
+            ContainerInfo selectedNodeAsContainer = _connectionTree.SelectedNode as ContainerInfo;
+            if (selectedNodeAsContainer != null)
+                Runtime.ConnectionInitiator.OpenConnection(selectedNodeAsContainer,
+                                                           ConnectionInfo.Force.SpanAllScreens | ConnectionInfo.Force.DoNotJump);
+            else
+                Runtime.ConnectionInitiator.OpenConnection(_connectionTree.SelectedNode,
+                                                           ConnectionInfo.Force.SpanAllScreens | ConnectionInfo.Force.DoNotJump);
         }
 
         private void OnConnectWithNoCredentialsClick(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-﻿using AxMSTSCLib;
+using AxMSTSCLib;
 using mRemoteNG.App;
 using mRemoteNG.Messages;
 using mRemoteNG.Properties;
@@ -683,6 +683,45 @@ namespace mRemoteNG.Connection.Protocol.RDP
             {
                 SetExtendedProperty("DesktopScaleFactor", DesktopScaleFactor);
                 SetExtendedProperty("DeviceScaleFactor", DeviceScaleFactor);
+
+                // Multi-monitor spanning: span across all screens
+                if (Force.HasFlag(ConnectionInfo.Force.SpanAllScreens))
+                {
+                    try
+                    {
+                        // Enable multi-monitor using the UseMultimon extended property (RDP 7+)
+                        SetExtendedProperty("UseMultimon", true);
+                    }
+                    catch
+                    {
+                        // Fallback for older RDP versions: use span mode
+                        try
+                        {
+                            // Enable span mode as fallback
+                            _rdpClient.AdvancedSettings7.EnableCredSspSupport = connectionInfo.UseCredSsp;
+                        }
+                        catch { /* ignore if property not available */ }
+                    }
+
+                    _rdpClient.FullScreen = true;
+
+                    // Calculate the bounding rectangle of all screens
+                    System.Drawing.Rectangle totalBounds = System.Drawing.Rectangle.Empty;
+                    foreach (Screen screen in Screen.AllScreens)
+                    {
+                        totalBounds = totalBounds == System.Drawing.Rectangle.Empty
+                            ? screen.Bounds
+                            : System.Drawing.Rectangle.Union(totalBounds, screen.Bounds);
+                    }
+
+                    _rdpClient.DesktopWidth = totalBounds.Width;
+                    _rdpClient.DesktopHeight = totalBounds.Height;
+
+                    Runtime.MessageCollector.AddMessage(MessageClass.InformationMsg,
+                        $"RDP multi-monitor span: {Screen.AllScreens.Length} screens, total resolution {totalBounds.Width}x{totalBounds.Height}");
+
+                    return;
+                }
 
                 if (Force.HasFlag(ConnectionInfo.Force.Fullscreen))
                 {

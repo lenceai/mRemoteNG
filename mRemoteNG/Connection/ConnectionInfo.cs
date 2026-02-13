@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -183,7 +183,8 @@ namespace mRemoteNG.Connection
             OverridePanel = 8,
             DontUseConsoleSession = 16,
             NoCredentials = 32,
-            ViewOnly = 64
+            ViewOnly = 64,
+            SpanAllScreens = 128
         }
 
         #endregion
