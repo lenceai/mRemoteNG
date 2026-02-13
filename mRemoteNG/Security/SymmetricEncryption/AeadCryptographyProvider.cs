@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Initial work:
  * This work (Modern Encryption of a String C#, by James Tuley), 
  * identified by James Tuley, is free of known copyright restrictions.
@@ -35,7 +35,7 @@ namespace mRemoteNG.Security.SymmetricEncryption
 
         //Preconfigured Password Key Derivation Parameters
         protected virtual int SaltBitSize { get; set; } = 128;
-        public virtual int KeyDerivationIterations { get; set; } = 1000;
+        public virtual int KeyDerivationIterations { get; set; } = 100000;
         protected virtual int MinPasswordLength { get; set; } = 1;
 
 
