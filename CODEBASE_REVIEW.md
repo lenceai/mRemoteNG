@@ -584,18 +584,36 @@ SendKeys.SendWait(finalCommand);
 
 ## Summary of Priority Actions
 
-| Priority | Issue | Impact |
-|----------|-------|--------|
-| P0 | Passwords stored as plain strings (#1.1) | Credential exposure in memory |
-| P0 | PowerShell password in CLI args (#1.6) | Credential exposure via process list |
-| P0 | ProtocolBase.Dispose inverted (#4.2) | Resource leak in every connection |
-| P1 | MD5 key derivation in legacy crypto (#1.2) | Weak encryption for SQL connections |
-| P1 | Low PBKDF2 iterations (#1.3) | Weak key derivation |
-| P1 | Duplicated credential provider code (#2.1) | Maintainability & bug risk |
-| P1 | MySQL connection string injection (#1.7) | SQL injection via connection string |
-| P2 | Reflection on every property access (#5.1) | Performance with many connections |
-| P2 | Test coverage gaps (#6.1) | Regression risk |
-| P2 | Empty catch blocks (#4.1) | Silent failures |
-| P3 | Naming convention inconsistencies (#3.1) | Code readability |
-| P3 | Hardcoded paths (#8.1) | Portability |
-| P3 | Unpinned package versions (#7.1) | Build reproducibility |
+| Priority | Issue | Impact | Status |
+|----------|-------|--------|--------|
+| P0 | Passwords stored as plain strings (#1.1) | Credential exposure in memory | Noted (requires major refactor) |
+| P0 | PowerShell password in CLI args (#1.6) | Credential exposure via process list | **FIXED** - Uses env vars now |
+| P0 | ProtocolBase.Dispose inverted (#4.2) | Resource leak in every connection | **FIXED** |
+| P1 | MD5 key derivation in legacy crypto (#1.2) | Weak encryption for SQL connections | Noted (requires migration path) |
+| P1 | Low PBKDF2 iterations (#1.3) | Weak key derivation | **FIXED** - Increased to 100,000 |
+| P1 | Duplicated credential provider code (#2.1) | Maintainability & bug risk | **FIXED** - CredentialResolver created |
+| P1 | MySQL connection string injection (#1.7) | SQL injection via connection string | **FIXED** - Uses builder now |
+| P2 | Reflection on every property access (#5.1) | Performance with many connections | Noted |
+| P2 | Test coverage gaps (#6.1) | Regression risk | Noted |
+| P2 | Empty catch blocks (#4.1) | Silent failures | Noted |
+| P3 | Naming convention inconsistencies (#3.1) | Code readability | Noted |
+| P3 | Hardcoded paths (#8.1) | Portability | Noted |
+| P3 | Unpinned package versions (#7.1) | Build reproducibility | Noted |
+
+## Additional Fixes Deployed
+
+| Fix | Description |
+|-----|-------------|
+| EncryptedSecureString.Dispose | No longer disposes static _machineKey shared by all instances |
+| ProtocolFactory null return | Now throws ArgumentOutOfRangeException for unsupported protocols |
+| RandomGenerator | Uses shared static SecureRandom instance instead of creating new per call |
+| PuttyBase bitwise AND | Changed `&` to `&&` for proper short-circuit evaluation |
+| EncryptedSecureString key gen | Uses char[] array instead of string concatenation in loop |
+
+## New Features Added
+
+| Feature | Description |
+|---------|-------------|
+| RDP Span All Screens | Multi-monitor spanning via UseMultimon + bounding rectangle calculation |
+| AI Security Scanner | LLM-powered system security analysis (OpenAI, Claude, Gemini, Grok) |
+| CredentialResolver | Centralized external credential provider resolution service |
