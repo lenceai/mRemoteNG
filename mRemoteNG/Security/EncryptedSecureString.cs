@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security;
 using mRemoteNG.Security.SymmetricEncryption;
 using Org.BouncyCastle.Security;
@@ -48,20 +48,22 @@ namespace mRemoteNG.Security
             SecureRandom random = new();
             random.SetSeed(random.GenerateSeed(128));
 
-            string machineKeyString = "";
+            char[] machineKeyChars = new char[keySize];
             for (int x = 0; x < keySize; x++)
             {
-                machineKeyString += (char)random.Next(33, 126);
+                machineKeyChars[x] = (char)random.Next(33, 126);
             }
 
-            return machineKeyString.ConvertToSecureString();
+            SecureString result = new string(machineKeyChars).ConvertToSecureString();
+            Array.Clear(machineKeyChars, 0, machineKeyChars.Length);
+            return result;
         }
 
         private void Dispose(bool disposing)
         {
             if (!disposing) return;
 
-            _machineKey?.Dispose();
+            // Do NOT dispose _machineKey here - it is a static field shared by all instances.
             _secureString?.Dispose();
         }
 

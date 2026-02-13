@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
@@ -49,7 +49,15 @@ namespace mRemoteNG.Config.DatabaseConnectors
 
         private void BuildSqlConnectionString()
         {
-            _dbConnectionString = $"server={_dbHost};user={_dbUsername};database={_dbName};port={_dbPort};password={_dbPassword};";
+            MySqlConnectionStringBuilder builder = new()
+            {
+                Server = _dbHost,
+                Port = uint.TryParse(_dbPort, out uint port) ? port : 3306,
+                Database = _dbName,
+                UserID = _dbUsername,
+                Password = _dbPassword
+            };
+            _dbConnectionString = builder.ConnectionString;
         }
         
         public void Connect()

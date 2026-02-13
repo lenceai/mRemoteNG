@@ -1,4 +1,4 @@
-﻿using mRemoteNG.Connection.Protocol.Http;
+using mRemoteNG.Connection.Protocol.Http;
 using mRemoteNG.Connection.Protocol.RAW;
 using mRemoteNG.Connection.Protocol.RDP;
 using mRemoteNG.Connection.Protocol.Rlogin;
@@ -62,9 +62,11 @@ namespace mRemoteNG.Connection.Protocol
                         throw (new Exception(Language.NoExtAppDefined));
                     }
                     return new IntegratedProgram();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(connectionInfo.Protocol),
+                        connectionInfo.Protocol,
+                        $"Unsupported protocol type: {connectionInfo.Protocol}");
             }
-
-            return default(ProtocolBase);
         }
     }
 }
