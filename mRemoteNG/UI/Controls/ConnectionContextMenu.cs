@@ -16,6 +16,7 @@ using mRemoteNG.Tree.Root;
 using mRemoteNG.Resources.Language;
 using System.Runtime.Versioning;
 using mRemoteNG.Security;
+using mRemoteNG.UI.Forms;
 using mRemoteNG.UI.TaskDialog;
 
 // ReSharper disable UnusedParameter.Local
@@ -64,6 +65,8 @@ namespace mRemoteNG.UI.Controls
         private ToolStripMenuItem _cMenTreeImportPutty;
         private ToolStripMenuItem _cMenTreeApplyInheritanceToChildren;
         private ToolStripMenuItem _cMenTreeApplyDefaultInheritance;
+        private ToolStripSeparator _cMenTreeSep5;
+        private ToolStripMenuItem _cMenTreeSecurityScan;
         private readonly ConnectionTree.ConnectionTree _connectionTree;
 
 
@@ -124,6 +127,8 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeToolsSort = new ToolStripMenuItem();
             _cMenTreeToolsSortAscending = new ToolStripMenuItem();
             _cMenTreeToolsSortDescending = new ToolStripMenuItem();
+            _cMenTreeSep5 = new ToolStripSeparator();
+            _cMenTreeSecurityScan = new ToolStripMenuItem();
             _cMenTreeMoveUp = new ToolStripMenuItem();
             _cMenTreeMoveDown = new ToolStripMenuItem();
 
@@ -156,7 +161,9 @@ namespace mRemoteNG.UI.Controls
                 _toolStripSeparator1,
                 _cMenTreeToolsSort,
                 _cMenTreeMoveUp,
-                _cMenTreeMoveDown
+                _cMenTreeMoveDown,
+                _cMenTreeSep5,
+                _cMenTreeSecurityScan
             });
             Name = "cMenTree";
             RenderMode = ToolStripRenderMode.Professional;
@@ -437,6 +444,19 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeMoveDown.Size = new System.Drawing.Size(199, 22);
             _cMenTreeMoveDown.Text = "Move down";
             _cMenTreeMoveDown.Click += OnMoveDownClicked;
+            //
+            // cMenTreeSep5
+            //
+            _cMenTreeSep5.Name = "_cMenTreeSep5";
+            _cMenTreeSep5.Size = new System.Drawing.Size(196, 6);
+            //
+            // cMenTreeSecurityScan
+            //
+            _cMenTreeSecurityScan.Image = Properties.Resources.UniqueKeyError_16x;
+            _cMenTreeSecurityScan.Name = "_cMenTreeSecurityScan";
+            _cMenTreeSecurityScan.Size = new System.Drawing.Size(199, 22);
+            _cMenTreeSecurityScan.Text = "AI Security Scan...";
+            _cMenTreeSecurityScan.Click += OnSecurityScanClicked;
             //
             // cMenEditSubMenu
             //
@@ -1031,6 +1051,19 @@ namespace mRemoteNG.UI.Controls
                 return;
 
             DefaultConnectionInheritance.Instance.SaveTo(_connectionTree.SelectedNode.Inheritance);
+        }
+
+        private void OnSecurityScanClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                FrmSecurityScan securityScanForm = new();
+                securityScanForm.Show();
+            }
+            catch (Exception ex)
+            {
+                Runtime.MessageCollector.AddExceptionStackTrace("Security Scan launch failed", ex);
+            }
         }
 
         #endregion
