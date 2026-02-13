@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,6 +16,7 @@ using mRemoteNG.Tree.Root;
 using mRemoteNG.Resources.Language;
 using System.Runtime.Versioning;
 using mRemoteNG.Security;
+using mRemoteNG.UI.Forms;
 using mRemoteNG.UI.TaskDialog;
 
 // ReSharper disable UnusedParameter.Local
@@ -35,6 +36,7 @@ namespace mRemoteNG.UI.Controls
         private ToolStripMenuItem _cMenTreeConnectWithOptionsNoCredentials;
         private ToolStripMenuItem _cMenTreeConnectWithOptionsConnectInFullscreen;
         private ToolStripMenuItem _cMenTreeConnectWithOptionsViewOnly;
+        private ToolStripMenuItem _cMenTreeConnectWithOptionsSpanAllScreens;
         private ToolStripMenuItem _cMenTreeDisconnect;
         private ToolStripSeparator _cMenTreeSep2;
         private ToolStripMenuItem _cMenTreeToolsTransferFile;
@@ -63,6 +65,8 @@ namespace mRemoteNG.UI.Controls
         private ToolStripMenuItem _cMenTreeImportPutty;
         private ToolStripMenuItem _cMenTreeApplyInheritanceToChildren;
         private ToolStripMenuItem _cMenTreeApplyDefaultInheritance;
+        private ToolStripSeparator _cMenTreeSep5;
+        private ToolStripMenuItem _cMenTreeSecurityScan;
         private readonly ConnectionTree.ConnectionTree _connectionTree;
 
 
@@ -95,6 +99,7 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeConnectWithOptionsNoCredentials = new ToolStripMenuItem();
             _cMenTreeConnectWithOptionsChoosePanelBeforeConnecting = new ToolStripMenuItem();
             _cMenTreeConnectWithOptionsViewOnly = new ToolStripMenuItem();
+            _cMenTreeConnectWithOptionsSpanAllScreens = new ToolStripMenuItem();
             _cMenTreeDisconnect = new ToolStripMenuItem();
             _cMenTreeSep1 = new ToolStripSeparator();
             _cMenTreeToolsExternalApps = new ToolStripMenuItem();
@@ -122,6 +127,8 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeToolsSort = new ToolStripMenuItem();
             _cMenTreeToolsSortAscending = new ToolStripMenuItem();
             _cMenTreeToolsSortDescending = new ToolStripMenuItem();
+            _cMenTreeSep5 = new ToolStripSeparator();
+            _cMenTreeSecurityScan = new ToolStripMenuItem();
             _cMenTreeMoveUp = new ToolStripMenuItem();
             _cMenTreeMoveDown = new ToolStripMenuItem();
 
@@ -154,7 +161,9 @@ namespace mRemoteNG.UI.Controls
                 _toolStripSeparator1,
                 _cMenTreeToolsSort,
                 _cMenTreeMoveUp,
-                _cMenTreeMoveDown
+                _cMenTreeMoveDown,
+                _cMenTreeSep5,
+                _cMenTreeSecurityScan
             });
             Name = "cMenTree";
             RenderMode = ToolStripRenderMode.Professional;
@@ -175,6 +184,7 @@ namespace mRemoteNG.UI.Controls
                 _cMenTreeConnectWithOptionsConnectToConsoleSession,
                 _cMenTreeConnectWithOptionsDontConnectToConsoleSession,
                 _cMenTreeConnectWithOptionsConnectInFullscreen,
+                _cMenTreeConnectWithOptionsSpanAllScreens,
                 _cMenTreeConnectWithOptionsNoCredentials,
                 _cMenTreeConnectWithOptionsChoosePanelBeforeConnecting,
                 _cMenTreeConnectWithOptionsViewOnly
@@ -207,6 +217,14 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeConnectWithOptionsConnectInFullscreen.Size = new System.Drawing.Size(245, 22);
             _cMenTreeConnectWithOptionsConnectInFullscreen.Text = "Connect in fullscreen";
             _cMenTreeConnectWithOptionsConnectInFullscreen.Click += OnConnectInFullscreenClicked;
+            //
+            // cMenTreeConnectWithOptionsSpanAllScreens
+            //
+            _cMenTreeConnectWithOptionsSpanAllScreens.Image = Properties.Resources.Monitor_16x;
+            _cMenTreeConnectWithOptionsSpanAllScreens.Name = "_cMenTreeConnectWithOptionsSpanAllScreens";
+            _cMenTreeConnectWithOptionsSpanAllScreens.Size = new System.Drawing.Size(245, 22);
+            _cMenTreeConnectWithOptionsSpanAllScreens.Text = "Connect spanning all screens";
+            _cMenTreeConnectWithOptionsSpanAllScreens.Click += OnConnectSpanAllScreensClicked;
             //
             // cMenTreeConnectWithOptionsNoCredentials
             //
@@ -427,6 +445,19 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeMoveDown.Text = "Move down";
             _cMenTreeMoveDown.Click += OnMoveDownClicked;
             //
+            // cMenTreeSep5
+            //
+            _cMenTreeSep5.Name = "_cMenTreeSep5";
+            _cMenTreeSep5.Size = new System.Drawing.Size(196, 6);
+            //
+            // cMenTreeSecurityScan
+            //
+            _cMenTreeSecurityScan.Image = Properties.Resources.UniqueKeyError_16x;
+            _cMenTreeSecurityScan.Name = "_cMenTreeSecurityScan";
+            _cMenTreeSecurityScan.Size = new System.Drawing.Size(199, 22);
+            _cMenTreeSecurityScan.Text = "AI Security Scan...";
+            _cMenTreeSecurityScan.Click += OnSecurityScanClicked;
+            //
             // cMenEditSubMenu
             //
             _cMenInheritanceSubMenu.DropDownItems.AddRange(new ToolStripItem[]
@@ -461,6 +492,7 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeConnectWithOptionsConnectToConsoleSession.Text = Language.ConnectToConsoleSession;
             _cMenTreeConnectWithOptionsDontConnectToConsoleSession.Text = Language.DontConnectToConsoleSession;
             _cMenTreeConnectWithOptionsConnectInFullscreen.Text = Language.ConnectInFullscreen;
+            _cMenTreeConnectWithOptionsSpanAllScreens.Text = "Connect spanning all screens";
             _cMenTreeConnectWithOptionsNoCredentials.Text = Language.ConnectNoCredentials;
             _cMenTreeConnectWithOptionsChoosePanelBeforeConnecting.Text = Language.ChoosePanelBeforeConnecting;
             _cMenTreeConnectWithOptionsViewOnly.Text = Language.ConnectInViewOnlyMode;
@@ -551,6 +583,7 @@ namespace mRemoteNG.UI.Controls
             _cMenTreeMoveUp.Enabled = false;
             _cMenTreeMoveDown.Enabled = false;
             _cMenTreeConnectWithOptionsViewOnly.Enabled = false;
+            _cMenTreeConnectWithOptionsSpanAllScreens.Enabled = false;
             _cMenTreeApplyInheritanceToChildren.Enabled = false;
             _cMenTreeApplyDefaultInheritance.Enabled = false;
             _cMenTreeCopyHostname.Enabled = false;
@@ -579,6 +612,7 @@ namespace mRemoteNG.UI.Controls
         {
             _cMenTreeConnectWithOptionsConnectInFullscreen.Enabled = false;
             _cMenTreeConnectWithOptionsConnectToConsoleSession.Enabled = false;
+            _cMenTreeConnectWithOptionsSpanAllScreens.Enabled = false;
 
             bool hasOpenConnections = containerInfo.Children.Any(child => child.OpenConnections.Count > 0);
             _cMenTreeDisconnect.Enabled = hasOpenConnections;
@@ -618,13 +652,14 @@ namespace mRemoteNG.UI.Controls
             if (connectionInfo.OpenConnections.Count == 0)
                 _cMenTreeDisconnect.Enabled = false;
 
-            if (!(connectionInfo.Protocol == ProtocolType.SSH1 | connectionInfo.Protocol == ProtocolType.SSH2))
+            if (!(connectionInfo.Protocol == ProtocolType.SSH1 || connectionInfo.Protocol == ProtocolType.SSH2))
                 _cMenTreeToolsTransferFile.Enabled = false;
 
             if (!(connectionInfo.Protocol == ProtocolType.RDP))
             {
                 _cMenTreeConnectWithOptionsConnectInFullscreen.Enabled = false;
                 _cMenTreeConnectWithOptionsConnectToConsoleSession.Enabled = false;
+                _cMenTreeConnectWithOptionsSpanAllScreens.Enabled = false;
             }
 
             if (connectionInfo.Protocol == ProtocolType.IntApp)
@@ -757,6 +792,17 @@ namespace mRemoteNG.UI.Controls
             else
                 Runtime.ConnectionInitiator.OpenConnection(_connectionTree.SelectedNode,
                                                            ConnectionInfo.Force.Fullscreen | ConnectionInfo.Force.DoNotJump);
+        }
+
+        private void OnConnectSpanAllScreensClicked(object sender, EventArgs e)
+        {
+            ContainerInfo selectedNodeAsContainer = _connectionTree.SelectedNode as ContainerInfo;
+            if (selectedNodeAsContainer != null)
+                Runtime.ConnectionInitiator.OpenConnection(selectedNodeAsContainer,
+                                                           ConnectionInfo.Force.SpanAllScreens | ConnectionInfo.Force.DoNotJump);
+            else
+                Runtime.ConnectionInitiator.OpenConnection(_connectionTree.SelectedNode,
+                                                           ConnectionInfo.Force.SpanAllScreens | ConnectionInfo.Force.DoNotJump);
         }
 
         private void OnConnectWithNoCredentialsClick(object sender, EventArgs e)
@@ -1005,6 +1051,19 @@ namespace mRemoteNG.UI.Controls
                 return;
 
             DefaultConnectionInheritance.Instance.SaveTo(_connectionTree.SelectedNode.Inheritance);
+        }
+
+        private void OnSecurityScanClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                FrmSecurityScan securityScanForm = new();
+                securityScanForm.Show();
+            }
+            catch (Exception ex)
+            {
+                Runtime.MessageCollector.AddExceptionStackTrace("Security Scan launch failed", ex);
+            }
         }
 
         #endregion

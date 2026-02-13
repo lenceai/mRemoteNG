@@ -1,4 +1,4 @@
-﻿using mRemoteNG.App;
+using mRemoteNG.App;
 using mRemoteNG.Messages;
 using mRemoteNG.Resources.Language;
 using mRemoteNG.Security;
@@ -295,7 +295,7 @@ namespace mRemoteNG.Connection.Protocol
                 PuttyProcess.WaitForInputIdle(Properties.OptionsAdvancedPage.Default.MaxPuttyWaitTime * 1000);
 
                 int startTicks = Environment.TickCount;
-                while (PuttyHandle.ToInt32() == 0 &
+                while (PuttyHandle.ToInt32() == 0 &&
                        Environment.TickCount < startTicks + Properties.OptionsAdvancedPage.Default.MaxPuttyWaitTime * 1000)
                 {
                     if (_isPuttyNg)

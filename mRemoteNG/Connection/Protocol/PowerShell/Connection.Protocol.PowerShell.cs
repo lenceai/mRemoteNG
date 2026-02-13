@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Runtime.Versioning;
 using System.Windows.Forms;
@@ -187,15 +187,26 @@ namespace mRemoteNG.Connection.Protocol.PowerShell
                 ";
 
                 // Setup process for script with arguments
-                //* The -NoProfile parameter would be a valuable addition but should be able to be deactivated.
-                string arguments = $@"-NoExit -Command ""& {{ {psScriptBlock} }}"" -Hostname ""'{_connectionInfo.Hostname}'"" -Username ""'{psUsername}'"" -Password ""'{_connectionInfo.Password}'"" -LoginAttempts {psLoginAttempts}";
+                // Password is passed via environment variable to avoid exposure in process command line
+                string arguments = $@"-NoExit -Command ""& {{ {psScriptBlock} }}"" -Hostname ""'{_connectionInfo.Hostname}'"" -Username ""'{psUsername}'"" -Password ""$env:MREMOTENG_PS_CRED"" -LoginAttempts {psLoginAttempts}";
                 string hostname = _connectionInfo.Hostname.Trim().ToLower();
                 bool useLocalHost = hostname == "" || hostname.Equals("localhost");
                 if (useLocalHost)
                 {
                     arguments = $@"-NoExit";
                 }
+
+                // Set password via environment variable instead of command line to prevent exposure
+                // in process listings. The environment variable is inherited by the child process.
+                if (!useLocalHost && !string.IsNullOrEmpty(_connectionInfo.Password))
+                {
+                    Environment.SetEnvironmentVariable("MREMOTENG_PS_CRED", _connectionInfo.Password);
+                }
+
                 _consoleControl.StartProcess(psExe, arguments);
+
+                // Clear the environment variable immediately after process start
+                Environment.SetEnvironmentVariable("MREMOTENG_PS_CRED", null);
 
                 while (!_consoleControl.IsHandleCreated) break;
                 _handle = _consoleControl.Handle;

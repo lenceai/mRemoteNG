@@ -1,4 +1,4 @@
-﻿using mRemoteNG.App;
+using mRemoteNG.App;
 using mRemoteNG.Tools;
 using System;
 using System.Threading;
@@ -345,7 +345,7 @@ namespace mRemoteNG.Connection.Protocol
 
         private void Dispose(bool disposing)
         {
-            if (disposing) return;
+            if (!disposing) return;
             tmrReconnect?.Dispose();
         }
 
